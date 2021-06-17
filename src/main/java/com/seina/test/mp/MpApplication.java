@@ -7,9 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @MapperScan("com.seina.test.mp.dao")
 public class MpApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(MpApplication.class, args);
     }
-
 }

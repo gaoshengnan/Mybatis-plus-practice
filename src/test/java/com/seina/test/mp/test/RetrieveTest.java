@@ -28,6 +28,9 @@ public class RetrieveTest {
     @Autowired
     private UserMapper userMapper;
 
+    /**
+     * 1 基本
+     */
 
     @Test
     public void selectById(){
@@ -37,7 +40,6 @@ public class RetrieveTest {
 
     @Test
     public void selectBatchIds(){
-        //批量 id 获取用户
         List<User> users = userMapper.selectBatchIds(Arrays.asList(1L, 2L));
         users.forEach(System.out::println);
     }
@@ -46,18 +48,21 @@ public class RetrieveTest {
     public void selectByMap(){
         //Map 中的 key 表示表的列名，不是实体中的属性名
         Map<String, Object> column = new HashMap<>();
-        column.put("name", "seina");
-        column.put("age", 3);
-        //SELECT id,name,age,email FROM user WHERE name = ? AND age = ?
+        column.put("name", "sn");
+        column.put("age", 18);
         List<User> users = userMapper.selectByMap(column);
         users.forEach(System.out::println);
     }
 
+    /**
+     * 2 条件构造器
+     */
     @Test
     public void selectByWrapper(){
-        //批量 id 获取用户
+
         //QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         QueryWrapper<User> queryWrapper = Wrappers.query();
+
         queryWrapper.gt("id", 1)
                 .gt("age", 2)
                 .like("name", "t")
@@ -86,6 +91,9 @@ public class RetrieveTest {
         users.forEach(System.out::println);
     }
 
+    /**
+     * 3 查部分
+     */
     @Test
     public void selectPartField(){
         QueryWrapper<User> queryWrapper = Wrappers.query();
@@ -94,6 +102,9 @@ public class RetrieveTest {
         users.forEach(System.out::println);
     }
 
+    /**
+     * 4 拼接
+     */
     @Test
     public void selectCondition(){
         QueryWrapper<User> queryWrapper = Wrappers.query();
@@ -102,11 +113,14 @@ public class RetrieveTest {
         String email = "";
         //condition 为 true 才会拼接条件
         queryWrapper.like(StringUtils.isNotEmpty(name), "name", name)
-                .like(StringUtils.isNotEmpty(email), "email", email);
+                    .like(StringUtils.isNotEmpty(email), "email", email);
         List<User> users = userMapper.selectList(queryWrapper);
         users.forEach(System.out::println);
     }
 
+    /**
+     * 5 实体
+     */
     @Test
     public void selectWhereEntity(){
         //将实体对象作为查询条件
@@ -116,65 +130,50 @@ public class RetrieveTest {
         users.forEach(System.out::println);
     }
 
+    /**
+     * 6 lambda
+     */
     @Test
     public void selectLambda(){
         //LambdaQueryWrapper<User> lambdaQueryWrapper = new QueryWrapper<User>().lambda();
         //LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         LambdaQueryWrapper<User> lambdaQueryWrapper = Wrappers.lambdaQuery();
         //从实体类中得到属性，再得到 column，防止写错
-        lambdaQueryWrapper.eq(User::getAge, 3);
+        lambdaQueryWrapper.eq(User::getAge, 18);
         List<User> users = userMapper.selectList(lambdaQueryWrapper);
         users.forEach(System.out::println);
     }
 
     @Test
     public void selectChainLambda(){
-        List<User> list = new LambdaQueryChainWrapper<User>(userMapper).gt(User::getAge, 2).list();
+        //3.0.7 新增的条件构造器
+        List<User> list = new LambdaQueryChainWrapper<>(userMapper)
+                .gt(User::getAge, 2)
+                .list();
         list.forEach(System.out::println);
     }
 
+    /**
+     * 7 自定义
+     */
+    @Test
+    public void selectMy(){
+        LambdaQueryWrapper<User> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        lambdaQueryWrapper.eq(User::getAge, 18);
+        List<User> users = userMapper.selectAllByWrapper(lambdaQueryWrapper);
+        users.forEach(System.out::println);
+    }
+
+    /**
+     * 8 分页
+     */
     @Test
     public void selectPage(){
         QueryWrapper<User> queryWrapper = Wrappers.query();
-        queryWrapper.gt("age", 2);
-        Page<User> page = new Page<>(1, 10);
-        Page<User> pageNotTotal = new Page<>(1, 10, false);//false 表示不查总记录数量
+        Page<User> page = new Page<>(2, 2);
+        //Page<User> pageNotTotal = new Page<>(1, 10, false);//false 表示不查总记录数量
         IPage<User> iPage = userMapper.selectPage(page, queryWrapper);
         System.out.println(iPage.getTotal());
         iPage.getRecords().forEach(System.out::println);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -16,8 +16,14 @@ logging:
   pattern:
     console: -%d%m%n
 
-mybatis-plus:
-  mapper-locations:
-    - com.seina.test.mp.mapper
+#mybatis-plus:
+#  mapper-locations: /mapper/*
+
+
+#mybatis-plus:
+#  global-config:
+#    db-config:
+#      logic-delete-value: 1
+#      logic-not-delete-value: 0
 
 
